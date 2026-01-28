@@ -123,14 +123,6 @@ def post_to_x(text, image_path=None):
         auth.set_access_token(X_ACCESS_TOKEN, X_ACCESS_SECRET)
         api = tweepy.API(auth)
 
-        # v2 Client for posting
-        client = tweepy.Client(
-            consumer_key=X_API_KEY,
-            consumer_secret=X_API_SECRET,
-            access_token=X_ACCESS_TOKEN,
-            access_token_secret=X_ACCESS_SECRET
-        )
-
         # 画像アップロード（v1.1 API）
         media_id = None
         if image_path and image_path.exists():
@@ -138,13 +130,13 @@ def post_to_x(text, image_path=None):
             media_id = media.media_id
             print(f"Image uploaded: {media_id}")
 
-        # ツイート投稿（v2 API）
+        # ツイート投稿（v1.1 API）
         if media_id:
-            response = client.create_tweet(text=text, media_ids=[media_id])
+            response = api.update_status(status=text, media_ids=[media_id])
         else:
-            response = client.create_tweet(text=text)
+            response = api.update_status(status=text)
 
-        print(f"Posted successfully! Tweet ID: {response.data['id']}")
+        print(f"Posted successfully! Tweet ID: {response.id}")
         return True
 
     except Exception as e:
